@@ -38,7 +38,7 @@ const everyAdjacencyPermutation = (adjacencyList) => {
   return first.map((f) => rest0.map((r) => ({ ...f, ...r }))).flat(1);
 };
 
-const depthFirstPath = (
+const depthFirstTraversal = (
   adjacency,
   node,
   visited = new Set(),
@@ -49,13 +49,13 @@ const depthFirstPath = (
   visited.add(node);
   adjacency[node].forEach((node) => {
     if (!visited.has(node)) {
-      depthFirstPath(adjacency, node, visited, traversal);
+      depthFirstTraversal(adjacency, node, visited, traversal);
     }
   });
   return traversal;
 };
 
-const everyDepthFirstPath = (adjacency, node) =>
+const everyDepthFirstTraversal = (adjacency, node) =>
   everyAdjacencyPermutation(adjacency).reduce(
     ([depthFirsts, depthFirstsSet], adjacency0) =>
       ((traversal) =>
@@ -64,7 +64,7 @@ const everyDepthFirstPath = (adjacency, node) =>
             ? [depthFirsts, depthFirstsSet]
             : [[...depthFirsts, traversal], depthFirstsSet.add(traversalKey)])(
           JSON.stringify(traversal),
-        ))(depthFirstPath(adjacency0, node)),
+        ))(depthFirstTraversal(adjacency0, node)),
     [[], new Set()],
   )[0];
 
@@ -90,7 +90,7 @@ module.exports = {
   toSpliced,
   toReversed,
   permutations,
-  depthFirstPath,
+  depthFirstTraversal,
   everyAdjacencyPermutation,
-  everyDepthFirstPath,
+  everyDepthFirstTraversal,
 };
