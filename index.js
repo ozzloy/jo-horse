@@ -55,12 +55,18 @@ const depthFirstPath = (
   return traversal;
 };
 
-const everyDepthFirst = (adjacency, node) =>
-  new Set(
-    everyAdjacencyPermutation(adjacency).map((adjacency0) =>
-      JSON.stringify(depthFirst(adjacency0, node)),
-    ),
-  );
+const everyDepthFirstPath = (adjacency, node) =>
+  everyAdjacencyPermutation(adjacency).reduce(
+    ([depthFirsts, depthFirstsSet], adjacency0) =>
+      ((traversal) =>
+        ((traversalKey) =>
+          depthFirstsSet.has(traversalKey)
+            ? [depthFirsts, depthFirstsSet]
+            : [[...depthFirsts, traversal], depthFirstsSet.add(traversalKey)])(
+          JSON.stringify(traversal),
+        ))(depthFirstPath(adjacency0, node)),
+    [[], new Set()],
+  )[0];
 
 if (typeof [].toReversed === "undefined") {
   Array.prototype.toReversed = function () {
@@ -86,5 +92,5 @@ module.exports = {
   permutations,
   depthFirstPath,
   everyAdjacencyPermutation,
-  everyDepthFirst,
+  everyDepthFirstPath,
 };

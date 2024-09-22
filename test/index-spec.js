@@ -6,6 +6,7 @@ const {
   permutations,
   everyAdjacencyPermutation,
   depthFirstPath,
+  everyDepthFirstPath,
 } = require("../index");
 
 describe("toReversed", () => {
@@ -288,6 +289,55 @@ describe("depthFirstPath", () => {
       6: [4],
     };
     expect(depthFirstPath(adjacency, 3)).to.be.deep.oneOf([
+      [3, 2, 1, 5, 4, 6],
+      [3, 4, 5, 1, 2, 6],
+      [3, 4, 5, 2, 1, 6],
+      [3, 4, 6, 5, 1, 2],
+      [3, 4, 6, 5, 2, 1],
+      [3, 2, 5, 1, 4, 6],
+      [3, 2, 5, 4, 6, 1],
+    ]);
+  });
+});
+
+describe("everyDepthFirstPath", () => {
+  it("works on empty graph", () => {
+    expect(everyDepthFirstPath({}, undefined)).to.deep.equal([[]]);
+  });
+  it("works on single node, no edges", () => {
+    expect(everyDepthFirstPath({ 0: [] }, 0)).to.deep.equal([[0]]);
+  });
+  it("works on single node, one edge", () => {
+    expect(everyDepthFirstPath({ 0: [0] }, 0)).to.deep.equal([[0]]);
+  });
+  it("works on 2 nodes, one edge", () => {
+    expect(everyDepthFirstPath({ 0: [1], 1: [0] }, 0)).to.deep.equal([[0, 1]]);
+  });
+  it("works on triangle graph", () => {
+    expect(
+      everyDepthFirstPath({ 0: [1, 2], 1: [0, 2], 2: [0, 1] }, 0),
+    ).to.have.deep.members([
+      [0, 1, 2],
+      [0, 2, 1],
+    ]);
+  });
+  it(`works on a larger graph starting at 3`, () => {
+    /*
+           1
+          / \
+         2---5
+        /   /
+       3---4---6
+    */
+    const adjacency = {
+      1: [2, 5],
+      2: [1, 3, 5],
+      3: [2, 4],
+      4: [3, 5, 6],
+      5: [1, 2, 4],
+      6: [4],
+    };
+    expect(everyDepthFirstPath(adjacency, 3)).to.have.deep.members([
       [3, 2, 1, 5, 4, 6],
       [3, 4, 5, 1, 2, 6],
       [3, 4, 5, 2, 1, 6],
