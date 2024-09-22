@@ -1,0 +1,10 @@
+* jo-horse
+utility functions
+
+adds functional programming helper functions such as =toReversed= to
+=Array.prototype=, unless =[].toReversed= is already defined.
+
+this is useful for versions of node older than 20
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toReversed#browser_compatibility
+
+adds =permutations= to arrays.
