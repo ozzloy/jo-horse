@@ -8,3 +8,11 @@ this is useful for versions of node older than 20
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toReversed#browser_compatibility
 
 adds =permutations= to arrays.
+
+to use,
+#+begin_src bash
+  npm install jo-horse
+#+end_src
+#+begin_src js
+  require('jo-horse');
+#+end_src
