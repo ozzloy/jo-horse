@@ -38,12 +38,20 @@ const everyAdjacencyPermutation = (adjacencyList) => {
   return first.map((f) => rest0.map((r) => ({ ...f, ...r }))).flat(1);
 };
 
-const depthFirst = (adjacency, node, visited = new Set(), traversal = []) => {
+const depthFirstPath = (
+  adjacency,
+  node,
+  visited = new Set(),
+  traversal = [],
+) => {
+  if (Object.keys(adjacency).length === 0) return [];
   traversal.push(node);
   visited.add(node);
-  adjacency[node].forEach((node) =>
-    !visited.has(node) ? depthFirst(adjacency, node, visited, traversal) : null,
-  );
+  adjacency[node].forEach((node) => {
+    if (!visited.has(node)) {
+      depthFirstPath(adjacency, node, visited, traversal);
+    }
+  });
   return traversal;
 };
 
@@ -76,7 +84,7 @@ module.exports = {
   toSpliced,
   toReversed,
   permutations,
-  depthFirst,
+  depthFirstPath,
   everyAdjacencyPermutation,
   everyDepthFirst,
 };
