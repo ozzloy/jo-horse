@@ -6,3 +6,7 @@
   git push
   npm publish --tag alpha --access public
 #+end_src
+* how someone else can use it
+#+begin_src bash
+  npm install jo-horse@alpha
+#+end_src
