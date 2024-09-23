@@ -1,4 +1,6 @@
 * jo-horse
+available under the terms of ISC or AGPLv3+
+
 utility functions
 
 adds functional programming helper functions such as =toReversed= to
