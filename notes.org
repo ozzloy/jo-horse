@@ -1,8 +1,8 @@
 * publish a new version
 #+begin_src bash
   npm version 0.0.0-alpha.2
-  git add files
-  git commit -m '0.0.0-alpha.2'
+  # git add package.json
+  # git commit -m '0.0.0-alpha.2'
   git push
   npm publish --tag alpha --access public
 #+end_src
