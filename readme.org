@@ -17,5 +17,18 @@ to use,
 #+end_src
 #+begin_src js
   require('jo-horse');
+
   [6, 2].permutations(); // [[6, 2], [2, 6]]
+
+  [6, 2, 8].permutations();
+  /*
+  [
+    [6, 2, 8],
+    [6, 8, 2],
+    [2, 6, 8],
+    [2, 8, 6],
+    [8, 6, 2],
+    [8, 2, 6],
+  ];
+  ,*/
 #+end_src
