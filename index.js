@@ -19,9 +19,10 @@ const toSpliced = (array, start, deleteCount, ...items) => {
 const permutations = (items) => {
   if (items.length <= 1) return [items];
   return items.flatMap((item, index) =>
-    permutations([...items.slice(0, index), ...items.slice(index + 1)]).map(
-      (permutation) => [item].concat(permutation),
-    ),
+    permutations([
+      ...items.slice(0, index),
+      ...items.slice(index + 1),
+    ]).map((permutation) => [item].concat(permutation)),
   );
 };
 
@@ -62,9 +63,12 @@ const everyDepthFirstTraversal = (adjacency, node) =>
         ((traversalKey) =>
           depthFirstsSet.has(traversalKey)
             ? [depthFirsts, depthFirstsSet]
-            : [[...depthFirsts, traversal], depthFirstsSet.add(traversalKey)])(
-          JSON.stringify(traversal),
-        ))(depthFirstTraversal(adjacency0, node)),
+            : [
+                [...depthFirsts, traversal],
+                depthFirstsSet.add(traversalKey),
+              ])(JSON.stringify(traversal)))(
+        depthFirstTraversal(adjacency0, node),
+      ),
     [[], new Set()],
   )[0];
 
