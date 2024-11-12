@@ -1,6 +1,6 @@
 {
   "name": "jo-horse",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "extreme jo horse",
   "main": "index.js",
   "bin": {
