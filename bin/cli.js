@@ -50,7 +50,49 @@ const getCurrentBranch = () => {
   });
 };
 
-const gitAddCommitPush = async (branch) => {
+const checkForRemoteOrigin = () => {
+  return new Promise((resolve, reject) => {
+    exec("git remote", (error, stdout, stderr) => {
+      if (error) {
+        return reject(error);
+      }
+      if (stderr) {
+        return reject(new Error(stderr));
+      }
+      const remotes = stdout.trim().split("\n");
+      resolve(remotes.includes("origin"));
+    });
+  });
+};
+
+const gitAddCommitPushAll = async (branch) => {
+  const hasOrigin = await checkForRemoteOrigin();
+  const commands = [
+    "git add -A",
+    "git commit --allow-empty-message --message ''",
+  ];
+  if (hasOrigin) {
+    commands.push(`git push origin ${branch}`);
+  } else {
+    console.log("🙂‍↔️ not pushing because");
+    console.log("   there is no remote named 'origin'");
+  }
+  return new Promise((resolve, reject) => {
+    const cwd = process.cwd();
+    return exec(commands.join(" && "), { cwd }, (error, stdout, stderr) => {
+      if (error) {
+        return reject(error);
+      }
+
+      if (stdout) console.log(stdout);
+      if (stderr) console.log(stderr);
+
+      return resolve();
+    });
+  });
+};
+
+const gitAddCommitPushTracked = async (branch) => {
   return new Promise((resolve, reject) => {
     const cwd = process.cwd();
     const commands = [
@@ -90,6 +132,59 @@ const getTrackedFiles = () => {
   });
 };
 
+const printEvent = (event, path) => {
+  const time = new Date().toLocaleTimeString();
+  const relPath = path.replace(process.cwd() + "/", "");
+  console.log("[" + time + "] " + event + ": " + relPath);
+};
+
+const watchAllFiles = (branch) => {
+  const chokidar = require("chokidar");
+  const watcher = chokidar.watch("**/*", {
+    persistent: true,
+    ignoreInitial: true,
+    ignored: ["**/node_modules/**", "**/.git/**"],
+    usePolling: false,
+  });
+  console.log("🐎 watching for changes");
+  watcher
+    .on("change", async (path) => {
+      printEvent("changed", path);
+      try {
+        console.log("🎠 tracking changes");
+        await gitAddCommitPushAll(branch);
+        console.log("🦄 changes tracked successfully!");
+      } catch (error) {
+        console.error("❌ error tracking changes:", error.message);
+      }
+    })
+    .on("unlink", async (path) => {
+      printEvent("deleted", path);
+      try {
+        console.log("🎠 tracking deletions");
+        await gitAddCommitPushAll(branch);
+        console.log("🦄 deletions tracked successfully!");
+      } catch (error) {
+        console.error("❌ error tracking deletions:", error.message);
+      }
+    })
+    .on("add", async (path) => {
+      printEvent("added", path);
+      try {
+        console.log("🎠 tracking additions");
+        await gitAddCommitPushAll(branch);
+        console.log("🦄 additions tracked successfully!");
+      } catch (error) {
+        console.error("❌ error tracking additions:", error.message);
+      }
+    });
+
+  process.on("SIGINT", () => {
+    console.log("\n🐴 stopping file watch...");
+    watcher.close().then(() => process.exit(0));
+  });
+};
+
 const watchTrackedFiles = (branch, files) => {
   const chokidar = require("chokidar");
   const watcher = chokidar.watch(files, {
@@ -98,21 +193,16 @@ const watchTrackedFiles = (branch, files) => {
     usePolling: false,
   });
   console.log("🐎 watching for changes");
-  const printEvent = (event, path) => {
-    const time = new Date().toLocaleTimeString();
-    const relPath = path.replace(process.cwd() + "/", "");
-    console.log("[" + time + "] " + event + ": " + relPath);
-  };
 
   watcher
     .on("change", async (path) => {
       printEvent("changed", path);
       try {
-        console.log("🎠 committing and pushing changes");
-        await gitAddCommitPush(branch);
-        console.log("🦄 changes pushed successfully!");
+        console.log("🎠 tracking changes");
+        await gitAddCommitPushTracked(branch);
+        console.log("🦄 changes tracked successfully!");
       } catch (error) {
-        console.error("❌ error pushing changes:", error.message);
+        console.error("❌ error tracking changes:", error.message);
       }
     })
     .on("unlink", (path) => printEvent("deleted", path))
@@ -142,7 +232,7 @@ async function main() {
         }
       });
     }
-    watchTrackedFiles(branch, files);
+    watchAllFiles(branch);
   } catch (error) {
     console.error("Error:", error.message);
     process.exit(1);
