@@ -3,6 +3,10 @@
   "version": "0.0.0-alpha.3",
   "description": "extreme jo horse",
   "main": "index.js",
+  "bin": {
+    "jo-horse": "./bin/cli.js"
+  },
+  "files": ["bin/", "index.js"],
   "scripts": {
     "test": "mocha"
   },
@@ -27,5 +31,9 @@
   "devDependencies": {
     "chai": "^4.3.10",
     "mocha": "^10.2.0"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "nodemon": "^3.1.7"
   }
 }
